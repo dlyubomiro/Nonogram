@@ -146,7 +146,7 @@ void printSourceCode(unsigned int level, string& matrix, unsigned int size)
 	}
 
 	unsigned int** numbers = createMatrix(maxlength, size);
-
+	    
 	for (size_t i = 0; i < maxlength; i++)
 	{
 		for (size_t j = 0; j < size; j++)
@@ -307,30 +307,10 @@ void countNumbersInColumns(char** nonogram, unsigned int size, int& maxcolumns, 
 				numbers[i][j] = 0;
 		}
 	}
-	//printNumbersAboveNonogram(numbers, maxrows, columns, maxcolumns);
-	//delete[] numbers;
 }
 
 void print2(char** field, unsigned int size,  unsigned int** numbersInRows, unsigned int** numbersInColums, int rows, int maxcolumns, int maxrows, int columns)
 {
-	//int rows = 0, maxcolumns = 0;
-	
-	
-	//countNumbersInRows(field, size, numbersInRows, rows, maxcolumns);
-	//countNumbersInColumns(field, size, maxcolumns, numbersInColums);
-
-	/*for (int i = 0; i < size; i++)
-	{
-		for (int j = 0; j < size; j++)
-			if ((field[i][j] != '*') && (field[i][j] != '-'))
-			{
-				cout << "[" << ' ' << "] ";
-			}
-			else
-				cout << "[" << field[i][j] << "] ";
-		cout << endl << endl;
-	}*/
-
 	printNumbersAboveNonogram(numbersInColums, maxrows, columns, maxcolumns);
 	for (int i = 0; i < size; i++)
 	{
