@@ -118,63 +118,7 @@ void printSourceCode(unsigned int level, string& matrix, unsigned int size)
 		return;
 	}
 	getline(myfile, matrix);
-	//cout << matrix << endl;
-	/*
-	string line;
-	unsigned int maxlength = 0;
-
-	unsigned int numbers[5][5];
-	//finding the max length
-	for (size_t i = 0; i < size; i++)
-	{
-		getline(myfile, line);
-		const int length = line.length();
-
-		char* char_array = new char[length + 1];
-		strcpy(char_array, line.c_str());
-
-		for (size_t i = 0; i < length; i++)
-		{
-			u
-		}
-		for (int i = 0; i < length; i++)
-		{
-			std::cout << char_array[i];
-		}
-		cout << endl;
-		delete[] char_array;
-	}
-
-	unsigned int** numbers = createMatrix(maxlength, size);
-	    
-	for (size_t i = 0; i < maxlength; i++)
-	{
-		for (size_t j = 0; j < size; j++)
-		{
-			cout << numbers[i][j];
-		}
-	}
-
-	*/
-
-	/*
-	int numbers[MAX_COUNT_OF_NUMBERS];
-	string line;
-	for (size_t i = 0; i < size; i++)
-	{
-		getline(myfile, line);
-		numbers[i] = stoi(line);
-		cout << numbers[i];
-	}
-	cout << matrix << endl;
-	myfile.close();*/
-}
-
-void readCharArrayWithSpaces()
-{
-	std::ofstream out("test.txt");
-	out << "free" << endl;
-	out.close();
+	myfile.close();
 }
 
 void print(char** field, unsigned int size)
@@ -187,7 +131,7 @@ void print(char** field, unsigned int size)
 	}
 }
 
-void printNumbersAboveNonogram( unsigned int** numbers, int maxrows, int columns, int maxcolumns)
+void printNumbersAboveNonogram(unsigned int** numbers, int maxrows, int columns, int maxcolumns)
 {
 	for (size_t i = 0; i < maxrows; i++)
 	{
@@ -261,15 +205,10 @@ void countNumbersInRows(char** nonogram, unsigned int size, unsigned int**& numb
 				numbers[i][j] = 0;
 		}
 	}
-	//printNumbersLeftOfNonogram(numbers, rows, maxcolumns);
-	//delete[] numbers;
-	
 }
 
 void countNumbersInColumns(char** nonogram, unsigned int size, int& maxcolumns, unsigned int**& numbers,int& rows,int& columns,int& maxrows)
 {
-	//unsigned int** numbers = createMatrix(size, size);
-	//int rows = 0, columns = 0, maxrows = 0;
 	unsigned int counter = 0;
 	for (size_t i = 0; i < size; i++)
 	{
@@ -329,24 +268,16 @@ void print2(char** field, unsigned int size,  unsigned int** numbersInRows, unsi
 				cout << "[" << field[i][j] << "] ";
 		cout << endl << endl;
 	}
-
-	/*for (size_t i = 0; i < rows; i++)
-	{
-		for (size_t j = 0; j < maxcolumns; j++)
-		{
-			if (numbers[i][j] == 0) cout << ' ';
-			else
-				cout << numbers[i][j] << ' ';
-		}
-		cout << endl;
-	}
-	cout << endl;*/
-	//delete[] numbersInRows;
 }
 
-bool isValid(unsigned int x, unsigned int y, char symbol, unsigned int size)
+bool isValid(unsigned int x, unsigned int y, unsigned int size)
 {
-	return x >= 0 && y >= 0 && x < size&& y < size && (symbol == '-' || symbol == '*');
+	return x >= 0 && y >= 0 && x < size&& y < size;
+}
+
+bool isValid(char symbol)
+{
+	return symbol == '-' || symbol == '*';
 }
 
 bool isLevelValid(unsigned int level)
@@ -374,10 +305,18 @@ void userInput(char** field, unsigned int& x, unsigned int& y, char& current_sym
 {
 	cout << "Enter x, y and symbol('*' to fill the cell, '-' to mark as empty): ";
 	cin >> x >> y >> current_symbol;
-	while (!isValid(x, y, current_symbol, size) || !isFree(field, x, y))
+	while (!isValid(x, y, size) || !isFree(field, x, y) || !isValid(current_symbol))
 	{
-		cout << "This cell is already opened! Try again: ";
-		cin >> x >> y >> current_symbol;
+		if (!isValid(x, y, size))
+			cout << "You have entered wrong coordinates (please enter coordinates between 0 and " << size << ")! Try again : ";
+		
+		else if (!isFree(field, x, y))
+			cout << "This cell is already opened! Try again: ";
+		
+		else if(!isValid(current_symbol))
+			cout << "You have entered wrong symbol! (please enter '*' to fill the cell or '-'to mark as empty)! Try again: ";
+
+		cin >> x >> y >> current_symbol;			
 	}
 }
 
@@ -498,28 +437,6 @@ size_t myStrlen(const char* str)
 	return count;
 }
 
-/*/
-void convertInMatrix(string matrix, char* nonogram[][])
-{
-	unsigned int matrix_size = sqrt(myStrlen(nonogram));
-	for (size_t i = 0; i < matrix_size; i++)
-	{
-		for (size_t j = 0; j < matrix_size; j++)
-		{
-			nonogram[i][j] = matrix[j + i * matrix_size];
-		}
-	}
-
-	for (size_t i = 0; i < matrix_size; i++)
-	{
-		for (size_t j = 0; j < matrix_size; j++)
-		{
-			cout << nonogram[i][j] << " ";
-		}
-		cout << endl;
-	}
-}*/
-
 void findMatrix(int level, char**& nonogram, unsigned int& size)
 {
 	if (level == 1)
@@ -549,9 +466,14 @@ void findMatrix(int level, char**& nonogram, unsigned int& size)
 	}
 }
 
-/*
-void play(unsigned int level, char**& nonogram, unsigned int size, string matrix, int& rows, int& columns, int& maxrows, int& maxcolumns)
+void play(unsigned int level, unsigned int**& numbersInColumns, unsigned int**& numbersInRows)
 {
+	unsigned int x, y, mistakes = 0, size = 0;
+	char current_symbol;
+
+	string matrix;
+	char** nonogram;
+	int maxcolumns = 0, rows = 0, maxrows = 0, columns = 0;
 
 	findMatrix(level, nonogram, size);
 	printSourceCode(level, matrix, size);
@@ -562,13 +484,33 @@ void play(unsigned int level, char**& nonogram, unsigned int size, string matrix
 			nonogram[i][j] = matrix[j + i * size];
 		}
 	}
-	unsigned int** numbersInColumns = createMatrix(size, size);
-	unsigned int** numbersInRows = createMatrix(size, size);
+	numbersInColumns = createMatrix(size, size);
+	numbersInRows = createMatrix(size, size);
 
 	countNumbersInColumns(nonogram, size, maxcolumns, numbersInColumns, rows, columns, maxrows);
 	countNumbersInRows(nonogram, size, numbersInRows, rows, maxcolumns);
 	print2(nonogram, size, numbersInRows, numbersInColumns, rows, maxcolumns, maxrows, columns);
-}*/
+
+	while (true)
+	{
+		userInput(nonogram, x, y, current_symbol, size);
+		if (isWinner2(nonogram, x, y, mistakes, current_symbol, size))
+		{
+			cout << "You won!\n";
+			cout << "You have reached level "<< ++level << " !\n\n";
+			play(level, numbersInColumns, numbersInRows);
+		}
+
+		if (mistakes == MAX_MISTAKES)
+		{
+			cout << "You lost!\n";
+			break;
+		}
+		print2(nonogram, size, numbersInRows, numbersInColumns, rows, maxcolumns, maxrows, columns);
+		cout << "Mistakes: " << mistakes << endl;
+	}
+
+}
 
 int main()
 {
@@ -593,7 +535,7 @@ int main()
 	}
 	else
 	{
-		cout << "Create an account!" << endl;
+		cout << "Create an account!\n";
 		cout << "Enter username: ";
 		cin >> username;
 		cout << "Enter password: ";
@@ -601,47 +543,9 @@ int main()
 		createAccount(username, password);
 	}
 
-	
+	unsigned int** numbersInColumns = {0};
+	unsigned int** numbersInRows = {0};
 	levelInput(level);
-	unsigned int x, y, mistakes = 0, size = 0;
-	char current_symbol;
-
-	string matrix;
-	char** nonogram;
-	int maxcolumns = 0, rows = 0, maxrows = 0, columns = 0;
-
-	findMatrix(level, nonogram, size);
-	printSourceCode(level, matrix, size);
-	for (size_t i = 0; i < size; i++)
-	{
-		for (size_t j = 0; j < size; j++)
-		{
-			nonogram[i][j] = matrix[j + i * size];
-		}
-	}
-	unsigned int** numbersInColumns = createMatrix(size, size);
-	unsigned int** numbersInRows = createMatrix(size, size);
-
-	countNumbersInColumns(nonogram, size, maxcolumns, numbersInColumns, rows, columns, maxrows);
-	countNumbersInRows(nonogram, size, numbersInRows, rows, maxcolumns);
-	print2(nonogram, size, numbersInRows, numbersInColumns,rows, maxcolumns, maxrows, columns);
-
-	
-	while (true)
-	{
-		userInput(nonogram, x, y, current_symbol, size);
-		if (isWinner2(nonogram, x, y, mistakes, current_symbol, size))
-		{
-			cout << "You won!/n";
-			break;
-		}
-
-		if (mistakes == MAX_MISTAKES)
-		{
-			cout << "You lost!";
-			break;
-		}
-		print2(nonogram, size, numbersInRows, numbersInColumns, rows, maxcolumns, maxrows, columns);
-		cout << "Mistakes: " << mistakes << endl;
-	}
+	play(level, numbersInColumns, numbersInRows);
+	return 0;
 }
