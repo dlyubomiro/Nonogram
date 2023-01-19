@@ -143,7 +143,11 @@ void printNumbersAboveNonogram(unsigned int** numbers, int maxrows, int columns,
 		{
 			if (numbers[i][j] == 0) cout << "    ";
 			else
-				cout << ' ' << numbers[i][j] << "  ";
+			{
+				if(numbers[i][j] > 9) cout << ' ' << numbers[i][j] << " ";
+				else if (numbers[i][j]) cout << ' ' << numbers[i][j] << "  ";
+			}
+				
 		}
 		cout << endl;
 	}
@@ -257,7 +261,10 @@ void print2(char** field, unsigned int size,  unsigned int** numbersInRows, unsi
 		{
 			if (numbersInRows[i][j] == 0) cout << "  ";
 			else
-				cout << numbersInRows[i][j] << ' ';
+			{
+				if (numbersInRows[i][j] > 9) cout << numbersInRows[i][j];
+				else if (numbersInRows[i][j]) cout << numbersInRows[i][j] << " ";
+			}
 		}
 		for (int j = 0; j < size; j++)
 			if ((field[i][j] != '*') && (field[i][j] != '-'))
